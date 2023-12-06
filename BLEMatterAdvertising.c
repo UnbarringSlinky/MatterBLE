@@ -1,4 +1,7 @@
 #include <furi_hal_bt.h>
+
+//Created by @UnbarringSlinky
+
 //Struct for advertising data: Matter Payload
 typedef struct {
     uint8_t length_flags;
@@ -14,10 +17,13 @@ typedef struct {
     uint8_t additional_data_flags;
 } MatterAdvData;
 
-
 // Function to create the Matter BLE advertisement payload
-MatterAdvData create_matter_ble_adv_payload() {
-    MatterAdvData adv_data;
+void static create_matter_ble_adv_payload(MatterAdvData* adv_data) {
+    //Ensure data integrity
+    if (adv_data == NULL) {
+       return;
+    }
+    memset(adv_data,0);
 
     // Set up flags
     adv_data.length_flags = 0x02; // Length of Flags
@@ -46,38 +52,30 @@ MatterAdvData create_matter_ble_adv_payload() {
 
     // Additional Data Flags
     adv_data.additional_data_flags = 0x01; // GATT-based Additional Data present
-
-    return adv_data;
 }
 
-
-
-
-int32_t matterEntry(void* p){
+int32_t static matterEntry(void* p) {
     //Mark arg as unused
     UNUSED(p);
 
     //Create Advertising Data
-    MatterAdvData adv_data = create_matter_ble_adv_payload();
-    uint8_t adv_payload[sizeof(MatterAdvData)];
-    memcpy(adv_payload, &adv_data, sizeof(MatterAdvData));
+    MatterAdvData *adv_data = malloc(sizeof(MatterAdvData));
+    create_matter_ble_adv_payload(&adv_data);
 
     //Setup payload in Furi_hal_bt
     furi_hal_bt_reinit();
-    if(!furi_hal_bt_custom_adv_set(adv_payload,sizeof(MatterAdvData))){
+    if (!furi_hal_bt_custom_adv_set(adv_payload,sizeof(MatterAdvData))) {
 
         return 0; //Unsuccessful Adv Set
     }
+
     //Successful Advertising Set
     uint8_t macAddr[] = { 0x6c, 0x7a, 0xd8, 0xac, 0x57, 0x72 };
     //Custom Advertisement Start
     furi_hal_bt_custom_adv_start(500,10000,0x01,macAddr,0x1F);
 
-
     //TODO Exit conditions
+    free(adv_data);
     //furi_hal_bt_custom_adv_stop()
     return 1;
-
-
-
 }
