@@ -1,0 +1,10 @@
+App(
+    appid="blematteradvertising",
+    name="BLEMatterAdv",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="matterEntry",
+    stack_size=6 * 1024,
+    fap_category="Bluetooth",
+    fap_author="@UnbarringSlinky",
+    fap_description="Broadcast matter advertising data to simulate matter devices.",
+    )
