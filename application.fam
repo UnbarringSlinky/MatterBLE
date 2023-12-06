@@ -7,4 +7,5 @@ App(
     fap_category="Bluetooth",
     fap_author="@UnbarringSlinky",
     fap_description="Broadcast matter advertising data to simulate matter devices.",
+    fap_icon="mattericon.png",
     )
